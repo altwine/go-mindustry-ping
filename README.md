@@ -1,5 +1,5 @@
 # go-mindustry-ping 0.0.1
-[Go Mindustry Ping](https://go.dev/dl/](https://pkg.go.dev/github.com/altwine/go-mindustry-ping) - command-line tool to query and display information about a Mindustry server.
+[Go Mindustry Ping](https://pkg.go.dev/github.com/altwine/go-mindustry-ping) - command-line tool to query and display information about a Mindustry server.
 
 # CLI Usage
 Firstly, download binary for your os/arch [here](https://github.com/altwine/go-mindustry-ping/releases)
