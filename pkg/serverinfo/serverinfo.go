@@ -5,10 +5,13 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
+	"strings"
 	"time"
 )
 
 type ServerInfo struct {
+	Address     string
+	Port        int
 	Host        string
 	Map         string
 	Players     int
@@ -21,19 +24,88 @@ type ServerInfo struct {
 	Latency     int
 }
 
-var Gamemodes = []string{"survival", "sandbox", "attack", "pvp", "editor"}
+func (si *ServerInfo) Update() error {
+	var err error
+
+	start := time.Now()
+	conn, err := net.Dial("udp4", net.JoinHostPort(si.Address, fmt.Sprintf("%d", si.Port)))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	err = conn.SetReadDeadline(time.Now().Add(5 * time.Second))
+	if err != nil {
+		return fmt.Errorf("failed to set read deadline: %w", err)
+	}
+
+	_, err = conn.Write([]byte{0xFE, 0x01})
+	if err != nil {
+		return fmt.Errorf("failed to send ping: %w", err)
+	}
+
+	buffer := make([]byte, 1024)
+	offset, err := conn.Read(buffer)
+	if err != nil {
+		return fmt.Errorf("failed to read response: %w", err)
+	}
+
+	si.Latency = int(time.Since(start).Milliseconds())
+
+	buffer = buffer[:offset]
+
+	si.Host, offset = readString(buffer)
+	buffer = buffer[offset:]
+
+	si.Map, offset = readString(buffer)
+	buffer = buffer[offset:]
+
+	si.Players, offset = readNumber(buffer)
+	buffer = buffer[offset:]
+
+	si.Waves, offset = readNumber(buffer)
+	buffer = buffer[offset:]
+
+	si.GameVersion, offset = readNumber(buffer)
+	buffer = buffer[offset:]
+
+	si.VerType, offset = readString(buffer)
+	buffer = buffer[offset:]
+
+	si.Gamemode, offset = readGamemode(buffer)
+	buffer = buffer[offset:]
+
+	si.Limit, offset = readNumber(buffer)
+	buffer = buffer[offset:]
+
+	si.Desc, offset = readString(buffer)
+	buffer = buffer[offset:]
+
+	return nil
+}
+
+var gamemodes = map[int]string{
+	0: "survival",
+	1: "sandbox",
+	2: "attack",
+	3: "pvp",
+	4: "editor",
+}
 
 func readGamemode(buffer []byte) (string, int) {
 	gamemodeIndex := int(buffer[0])
-	if gamemodeIndex >= len(Gamemodes) || gamemodeIndex < 0 {
-		return "unknown", 1
+	gamemode, found := gamemodes[gamemodeIndex]
+	if found {
+		return gamemode, 1
 	}
-	return Gamemodes[gamemodeIndex], 1
+	return "unknown", 1
 }
 
 func readString(buffer []byte) (string, int) {
 	length := int(buffer[0]) + 1
 	text := string(buffer[1:length])
+	text = strings.ReplaceAll(text, "\r", " ")
+	text = strings.ReplaceAll(text, "\n", " ")
 	return text, length
 }
 
@@ -48,76 +120,9 @@ func readNumber(buffer []byte) (int, int) {
 }
 
 func GetServerInfo(address string, port int) (*ServerInfo, error) {
-	start := time.Now()
-	conn, err := net.Dial("udp4", fmt.Sprintf("%s:%d", address, port))
-	if err != nil {
-		return nil, fmt.Errorf("failed to dial server: %w", err)
+	si := &ServerInfo{Address: address, Port: port}
+	if err := si.Update(); err != nil {
+		return &ServerInfo{}, err
 	}
-	defer conn.Close()
-
-	pingBuffer := []byte{0xFE, 0x01}
-	_, err = conn.Write(pingBuffer)
-	if err != nil {
-		return nil, fmt.Errorf("failed to send ping: %w", err)
-	}
-
-	if err := conn.SetReadDeadline(time.Now().Add(5 * time.Second)); err != nil {
-		return nil, fmt.Errorf("failed to set read deadline: %w", err)
-	}
-
-	buffer := make([]byte, 1024)
-	n, err := conn.Read(buffer)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response: %w", err)
-	}
-
-	msg := buffer[:n]
-
-	host, offset := readString(msg)
-	msg = msg[offset:]
-
-	mapName, offset := readString(msg)
-	msg = msg[offset:]
-
-	players, offset := readNumber(msg)
-	msg = msg[offset:]
-
-	waves, offset := readNumber(msg)
-	msg = msg[offset:]
-
-	gameVersion, offset := readNumber(msg)
-	msg = msg[offset:]
-
-	verType, offset := readString(msg)
-	msg = msg[offset:]
-
-	gamemode, offset := readGamemode(msg)
-	msg = msg[offset:]
-
-	limit, offset := readNumber(msg)
-	msg = msg[offset:]
-
-	desc, offset := readString(msg)
-	msg = msg[offset:]
-
-	// modeName
-	readString(msg)
-
-	duration := time.Since(start)
-	latency := int(duration.Milliseconds())
-
-	info := &ServerInfo{
-		Host:        host,
-		Map:         mapName,
-		Players:     players,
-		Waves:       waves,
-		GameVersion: gameVersion,
-		VerType:     verType,
-		Gamemode:    gamemode,
-		Limit:       limit,
-		Desc:        desc,
-		Latency:     latency,
-	}
-
-	return info, nil
+	return si, nil
 }

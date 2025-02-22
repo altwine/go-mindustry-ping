@@ -23,30 +23,14 @@ function build () {
     echo "Success!"
 }
 
-function compress () {
-    echo "Compressing $1"
-    upx --lzma --best -q "../build/$1" > /dev/null 2>&1
-    if [ $? -ne 0 ];
-    then
-        echo "Failed!"
-        return
-    fi
-    echo "Success!"
-}
-
-function package () {
-    local base_directory=$(echo "$1" | cut -d "/" -f1)
-    mkdir -p "../build/releases"
-    tar czf "../build/releases/$base_directory.tar.gz" -C "../build/$base_directory" .
-}
-
 clean
-build "go-mindustry-ping.exe" "0.0.1" "windows" "amd64"
-build "go-mindustry-ping" "0.0.1" "linux" "amd64"
-build "go-mindustry-ping" "0.0.1" "darwin" "amd64"
-compress "windows-amd64/go-mindustry-ping.exe"
-compress "linux-amd64/go-mindustry-ping"
-compress "darwin-amd64/go-mindustry-ping"
-package "windows-amd64/go-mindustry-ping.exe"
-package "linux-amd64/go-mindustry-ping"
-package "darwin-amd64/go-mindustry-ping"
+build "go-mindustry-ping.exe" "v0.0.2" "windows" "amd64"
+build "go-mindustry-ping" "v0.0.2" "linux" "amd64"
+build "go-mindustry-ping" "v0.0.2" "darwin" "amd64"
+
+"../build/windows-amd64/go-mindustry-ping.exe" --host "162.248.100.133"
+"../build/windows-amd64/go-mindustry-ping.exe" --help
+"../build/windows-amd64/go-mindustry-ping.exe" --host "mindustry.ddns.net"
+"../build/windows-amd64/go-mindustry-ping.exe" --host "mdt.mdtleague.top"
+"../build/windows-amd64/go-mindustry-ping.exe" --host "cn.mindustry.top"
+"../build/windows-amd64/go-mindustry-ping.exe" --host "mindurka.fun"

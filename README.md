@@ -1,32 +1,31 @@
-# go-mindustry-ping 0.0.1
-[Go Mindustry Ping](https://pkg.go.dev/github.com/altwine/go-mindustry-ping) - command-line tool to query and display information about a Mindustry server.
+# go-mindustry-ping v1.0.0
+Go Mindustry Ping - command-line tool to query and display information about a Mindustry server without any external dependency.
 
-# CLI Usage
-Firstly, download binary for your os/arch [here](https://github.com/altwine/go-mindustry-ping/releases)
+## CLI Usage
 ```bash
 # Windows usage example
-go-mindustry-ping --host 121.127.37.17 --colorize --refresh 5000
+go-mindustry-ping --host 121.127.37.17 --refresh 5000
 
-# Linux & MacOS usage example
-./go-mindustry-ping --host 121.127.37.17 --colorize --refresh 5000
+# Linux & MacOS usage examples
+./go-mindustry-ping --host 121.127.37.17 --refresh 5000
 ```
 * `--host <host>` - server host; (Default: 127.0.0.1)
 * `--port <port>` - server port; (Default: 6567)
-* `--colorize` - convert mindustry color tags to ansi-codes; (Default: false)
-* `--refresh <ms>` - refresh information every N milliseconds, 0 for no refresh; (Default: 0)
+* `--raw` - show fields as-is (without formatting); (Default: false)
+* `--refresh <ms>` - refresh interval, in ms (0 - no refresh); (Default: 0)
+* `--indent <size>` - indent size; (Default: 3)
+* `--no-ansi` - prevent printing ANSI-codes; (Default: false)
 
-![Example of CLI usage](assets/cli-usage-1.png)
+![Example of CLI usage](assets/cli-usage-1.webp)
 
-# Direct API Usage
-```bash
-go get github.com/altwine/go-mindustry-ping@latest
-```
+## Direct API Usage
 ```go
 package main
 
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/altwine/go-mindustry-ping/pkg/serverinfo"
 )
@@ -36,20 +35,24 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%d players is playing on omnidustry server right now!!", si.Players)
+	si.FormatFieldsAnsi() // Replace all color tags with their corresponding ANSI codes
+	fmt.Printf("%d players are playing on the omnidustry server right now!!", si.Players)
+	time.Sleep(time.Second * 5)
+	err := si.Update()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("%d players is playing on the omnidustry 5 seconds later!!", si.Players)
 }
 ```
 
-# Building
-1. Install required tools: [golang compiler](https://go.dev/dl/), [UPX](https://upx.github.io).
-2. Run `build.sh` in `scripts`.
-3. Find binaries in `build` directory.
+## Building
+1. Install required tools: [Go compiler](https://go.dev/dl/)
+2. Run `build.sh` in the `scripts` directory.
+3. Find binaries in the `build` directory.
 
-# Plans
-This tool is still in unstable state.
-- [ ] Full mindustry markup support: named colors and other strange formats
-- [ ] Improve command arguments handling
-- [ ] Fix exit handling
-- [ ] Add information about server ip address (Like the code region where server is located)
-- [ ] Different icons for non-"official" type servers like "MindustryX" and etc
-- [ ] Maybe ship two different builds: with and without UPX, because anti-viruses don't like UPX much
+## Plans
+This project is essentially done. No further plans, only bug fixes.
+
+# License
+MIT. See the [LICENSE](LICENSE.txt) file.
