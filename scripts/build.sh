@@ -8,13 +8,13 @@ function clean () {
 function build () {
     local binary_name="$1"
     local binary_version="$2"
-    TARGET_OS="$3"
-    TARGET_ARCH="$4"
-    echo "Building $TARGET_OS-$TARGET_ARCH/$binary_name"
+    export GOOS="$3"
+    export GOARCH="$4"
+    echo "Building $GOOS-$GOARCH/$binary_name"
     go build \
         -C "../cmd/go-mindustry-ping" \
-        -ldflags="-s -w -X 'main.BINARY_VERSION=$binary_version'" \
-        -o "../../build/$TARGET_OS-$TARGET_ARCH/$binary_name"
+        -ldflags="-s -w -X 'main.BINARY_VERSION=$binary_version' -X 'main.BINARY_ARCH=$GOARCH' -X 'main.BINARY_OS=$GOOS'" \
+        -o "../../build/$GOOS-$GOARCH/$binary_name"
     if [ $? -ne 0 ];
     then
         echo "Failed!"
@@ -24,6 +24,6 @@ function build () {
 }
 
 clean
-build "go-mindustry-ping.exe" "v0.0.2" "windows" "amd64"
-build "go-mindustry-ping" "v0.0.2" "linux" "amd64"
-build "go-mindustry-ping" "v0.0.2" "darwin" "amd64"
+build "go-mindustry-ping.exe" "v0.0.3" "windows" "amd64"
+build "go-mindustry-ping" "v0.0.3" "linux" "amd64"
+build "go-mindustry-ping" "v0.0.3" "darwin" "amd64"

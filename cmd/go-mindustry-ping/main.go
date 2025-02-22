@@ -11,6 +11,8 @@ import (
 )
 
 var BINARY_VERSION string
+var BINARY_ARCH string
+var BINARY_OS string
 
 func main() {
 	flag.Usage = func() {
@@ -25,7 +27,14 @@ func main() {
 	refresh := flag.Int("refresh", 0, "Refresh interval, in ms (0 - no refresh)")
 	indentSize := flag.Int("indent", 3, "Indent size")
 	noAnsi := flag.Bool("no-ansi", false, "Prevent printing ANSI-codes")
+	version := flag.Bool("version", false, "Print the version number")
+
 	flag.Parse()
+
+	if *version {
+		fmt.Printf("go-mindustry-ping %s %s/%s", BINARY_VERSION, BINARY_OS, BINARY_ARCH)
+		return
+	}
 
 	printer := &Printer{IndentSize: *indentSize, NoAnsi: *noAnsi}
 	si, err := serverinfo.GetServerInfo(*host, *port)
