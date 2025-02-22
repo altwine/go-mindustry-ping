@@ -27,10 +27,3 @@ clean
 build "go-mindustry-ping.exe" "v0.0.2" "windows" "amd64"
 build "go-mindustry-ping" "v0.0.2" "linux" "amd64"
 build "go-mindustry-ping" "v0.0.2" "darwin" "amd64"
-
-"../build/windows-amd64/go-mindustry-ping.exe" --host "162.248.100.133"
-"../build/windows-amd64/go-mindustry-ping.exe" --help
-"../build/windows-amd64/go-mindustry-ping.exe" --host "mindustry.ddns.net"
-"../build/windows-amd64/go-mindustry-ping.exe" --host "mdt.mdtleague.top"
-"../build/windows-amd64/go-mindustry-ping.exe" --host "cn.mindustry.top"
-"../build/windows-amd64/go-mindustry-ping.exe" --host "mindurka.fun"
