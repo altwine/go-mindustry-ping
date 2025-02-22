@@ -23,7 +23,6 @@ go-mindustry-ping --host 121.127.37.17 --refresh 5000
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -31,18 +30,25 @@ import (
 )
 
 func main() {
+	// Fetch server info
 	si, err := serverinfo.GetServerInfo("omnidustry.ru", 6567)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error fetching server info: %v", err)
 	}
+
 	si.FormatFieldsAnsi() // Replace all color tags with their corresponding ANSI codes
-	fmt.Printf("%d players are playing on the omnidustry server right now!!", si.Players)
-	time.Sleep(time.Second * 5)
-	err := si.Update()
-	if err != nil {
-		log.Fatal(err)
+
+	log.Printf("%d players are playing on the omnidustry server right now!", si.Players)
+
+	// Wait for 5 seconds before updating server info
+	time.Sleep(5 * time.Second)
+
+	// Update the server info
+	if err := si.Update(); err != nil {
+		log.Fatalf("Error updating server info: %v", err)
 	}
-	fmt.Printf("%d players is playing on the omnidustry 5 seconds later!!", si.Players)
+
+	log.Printf("%d players are playing on the omnidustry server 5 seconds later!", si.Players)
 }
 ```
 
