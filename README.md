@@ -1,4 +1,4 @@
-# go-mindustry-ping v1.0.0
+# go-mindustry-ping v2.0.0
 Go Mindustry Ping - command-line tool to query and display information about a Mindustry server without any external dependency.
 
 ## CLI Usage
