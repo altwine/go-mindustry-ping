@@ -1,3 +1,6 @@
+# go-mindustry-ping v1.0.1
+* Provide .zip for windows users.
+
 # go-mindustry-ping v1.0.0
 * Fields formatter for HTML;
 * Bump go version to 1.26.2;

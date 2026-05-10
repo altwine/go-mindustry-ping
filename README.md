@@ -1,4 +1,4 @@
-# go-mindustry-ping v1.0.0
+# go-mindustry-ping v1.0.1
 Go Mindustry Ping - command-line tool to query and display information about a Mindustry server without any external dependency.
 
 ## CLI Usage
@@ -48,7 +48,7 @@ func main() {
 
 ## Building
 1. Install required tools: [Go compiler](https://go.dev/dl/)
-2. Run `build.sh v1.0.0` in the `scripts` directory.
+2. Run `build.sh v1.0.1` in the `scripts` directory.
 3. Find binaries in the `build` directory.
 
 ## Plans
