@@ -1,0 +1,47 @@
+name: Build, release, publish
+
+on:
+    push:
+        tags:
+            - "v*"
+
+permissions:
+    contents: write
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v6
+
+            - name: Set up Go
+              uses: actions/setup-go@v6
+              with:
+                  go-version: "1.26.2"
+
+            - name: Get version from tag
+              id: get_version
+              run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+            - name: Run build script
+              run: |
+                  cd ./scripts
+                  chmod +x build.sh
+                  ./build.sh "${{ steps.get_version.outputs.VERSION }}"
+                  cd ..
+
+            - name: Run package script
+              run: |
+                  cd ./scripts
+                  chmod +x package.sh
+                  ./package.sh
+                  cd ..
+
+            - name: Release binaries
+              uses: softprops/action-gh-release@v3
+              with:
+                  tag_name: ${{ steps.get_version.outputs.VERSION }}
+                  files: build/releases/*.tar.gz
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

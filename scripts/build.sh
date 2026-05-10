@@ -23,7 +23,9 @@ function build () {
     echo "Success!"
 }
 
+VERSION="$1"
+
 clean
-build "go-mindustry-ping.exe" "v0.0.3" "windows" "amd64"
-build "go-mindustry-ping" "v0.0.3" "linux" "amd64"
-build "go-mindustry-ping" "v0.0.3" "darwin" "amd64"
+build "go-mindustry-ping.exe" "$VERSION" "windows" "amd64"
+build "go-mindustry-ping" "$VERSION" "linux" "amd64"
+build "go-mindustry-ping" "$VERSION" "darwin" "amd64"

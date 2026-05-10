@@ -48,7 +48,7 @@ func main() {
 
 ## Building
 1. Install required tools: [Go compiler](https://go.dev/dl/)
-2. Run `build.sh` in the `scripts` directory.
+2. Run `build.sh v0.0.3` in the `scripts` directory.
 3. Find binaries in the `build` directory.
 
 ## Plans
