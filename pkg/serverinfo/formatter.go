@@ -2,7 +2,6 @@ package serverinfo
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -94,7 +93,70 @@ func (si *ServerInfo) forEachTag(callback func(string) string) {
 }
 
 func (si *ServerInfo) FormatFieldsHtml() {
-	log.Fatal("FormatField for HTML is not implemented yet.")
+	processField := func(field string) string {
+		if field == "" {
+			return field
+		}
+
+		re := regexp.MustCompile(`\[(.*?)\]`)
+
+		var result strings.Builder
+		lastIndex := 0
+		lastTagWasColor := false
+
+		matches := re.FindAllStringSubmatchIndex(field, -1)
+
+		for _, match := range matches {
+			if match[0] > lastIndex {
+				result.WriteString(field[lastIndex:match[0]])
+			}
+
+			tagContent := field[match[2]:match[3]]
+
+			if tagContent == "" {
+				if lastTagWasColor {
+					result.WriteString(`</span>`)
+					lastTagWasColor = false
+				}
+			} else {
+				tag := fmt.Sprintf("[%s]", tagContent)
+				color, found := getColorFromTag(tag)
+				if found {
+					if lastTagWasColor {
+						result.WriteString(`</span>`)
+					}
+					hexColor := fmt.Sprintf("#%02X%02X%02X", color.R, color.G, color.B)
+					result.WriteString(fmt.Sprintf(`<span style="color: %s;">`, hexColor))
+					lastTagWasColor = true
+				} else {
+					if lastTagWasColor {
+						result.WriteString(`</span>`)
+						lastTagWasColor = false
+					}
+					result.WriteString(tag)
+				}
+			}
+
+			lastIndex = match[1]
+		}
+
+		if lastIndex < len(field) {
+			result.WriteString(field[lastIndex:])
+		}
+
+		if lastTagWasColor {
+			result.WriteString(`</span>`)
+		}
+
+		return result.String()
+	}
+
+	si.Address = processField(si.Address)
+	si.Host = processField(si.Host)
+	si.Map = processField(si.Map)
+	si.VerType = processField(si.VerType)
+	si.Gamemode = processField(si.Gamemode)
+	si.Desc = processField(si.Desc)
 }
 
 func (si *ServerInfo) FormatFieldsAnsi() {
