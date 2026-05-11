@@ -3,6 +3,7 @@ set -e
 
 function package () {
 	local base_directory=$(echo "$1" | cut -d "/" -f1)
+	local filename=$(basename "$1")
 
 	mkdir -p "../build/releases"
 
