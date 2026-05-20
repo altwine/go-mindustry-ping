@@ -4,10 +4,10 @@ Go Mindustry Ping - command-line tool to query and display information about a M
 ## CLI Usage
 ```bash
 # Windows usage example
-go-mindustry-ping --host 121.127.37.17 --refresh 5000
+$ go-mindustry-ping --host 121.127.37.17 --refresh 5000
 
 # Linux & MacOS usage examples
-./go-mindustry-ping --host 121.127.37.17 --refresh 5000
+$ ./go-mindustry-ping --host 121.127.37.17 --refresh 5000
 ```
 * `--host <host>` - server host; (Default: 127.0.0.1)
 * `--port <port>` - server port; (Default: 6567)
