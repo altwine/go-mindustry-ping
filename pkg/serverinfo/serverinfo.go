@@ -19,14 +19,13 @@ type ServerInfo struct {
 	GameVersion int
 	VerType     string
 	Gamemode    string
+	ModeName    string
 	Limit       int
 	Desc        string
 	Latency     int
 }
 
 func (si *ServerInfo) Update() error {
-	var err error
-
 	start := time.Now()
 	conn, err := net.Dial("udp4", net.JoinHostPort(si.Address, fmt.Sprintf("%d", si.Port)))
 	if err != nil {
@@ -51,7 +50,6 @@ func (si *ServerInfo) Update() error {
 	}
 
 	si.Latency = int(time.Since(start).Milliseconds())
-
 	buffer = buffer[:offset]
 
 	si.Host, offset = readString(buffer)
@@ -80,6 +78,16 @@ func (si *ServerInfo) Update() error {
 
 	si.Desc, offset = readString(buffer)
 	buffer = buffer[offset:]
+
+	si.ModeName, offset = readString(buffer)
+	buffer = buffer[offset:]
+
+	if len(buffer) >= 2 {
+		portRaw := int16(binary.BigEndian.Uint16(buffer[:2]))
+		if portRaw != 0 {
+			si.Port = int(portRaw)
+		}
+	}
 
 	return nil
 }

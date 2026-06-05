@@ -79,6 +79,7 @@ func (si *ServerInfo) forEachField(callback func(string) string) {
 	si.Map = callback(si.Map)
 	si.VerType = callback(si.VerType)
 	si.Gamemode = callback(si.Gamemode)
+	si.ModeName = callback(si.ModeName)
 	si.Desc = callback(si.Desc)
 }
 
@@ -89,6 +90,7 @@ func (si *ServerInfo) forEachTag(callback func(string) string) {
 	si.Map = re.ReplaceAllStringFunc(si.Map, callback)
 	si.VerType = re.ReplaceAllStringFunc(si.VerType, callback)
 	si.Gamemode = re.ReplaceAllStringFunc(si.Gamemode, callback)
+	si.ModeName = re.ReplaceAllStringFunc(si.ModeName, callback)
 	si.Desc = re.ReplaceAllStringFunc(si.Desc, callback)
 }
 
@@ -156,6 +158,7 @@ func (si *ServerInfo) FormatFieldsHtml() {
 	si.Map = processField(si.Map)
 	si.VerType = processField(si.VerType)
 	si.Gamemode = processField(si.Gamemode)
+	si.ModeName = processField(si.ModeName)
 	si.Desc = processField(si.Desc)
 }
 
