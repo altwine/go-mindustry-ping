@@ -1,3 +1,7 @@
+# go-mindustry-ping v1.0.2
+* Respect port field of motd;
+* Support for all colors.
+
 # go-mindustry-ping v1.0.1
 * Provide .zip for windows users.
 
